@@ -70,6 +70,7 @@ func PostURL(w http.ResponseWriter, r *http.Request) {
 	storage.Lnks[url] = id
 
 	shortURL := storage.URL + id
+	w.WriteHeader(http.StatusCreated)
 	io.WriteString(w, shortURL)
 
 }
