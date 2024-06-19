@@ -3,7 +3,6 @@ package endpoints
 import (
 	"io"
 	"net/http"
-	"strings"
 
 	"github.com/Far04ka/LinkShortener/internal/storage"
 	"github.com/teris-io/shortid"
@@ -20,6 +19,21 @@ func Router(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetURL(w http.ResponseWriter, r *http.Request) {
+	reqURL := r.URL.Path[1:]
+	if len(reqURL) == 0 {
+		http.Error(w, "bad request", http.StatusBadRequest)
+		return
+	}
+
+	for key, val := range storage.Lnks {
+		if val == reqURL {
+			http.Redirect(w, r, key, http.StatusTemporaryRedirect)
+			return
+		}
+	}
+
+	http.Error(w, "bad request", http.StatusBadRequest)
+
 }
 
 func PostURL(w http.ResponseWriter, r *http.Request) {
@@ -29,7 +43,7 @@ func PostURL(w http.ResponseWriter, r *http.Request) {
 	}
 
 	req, err := io.ReadAll(r.Body)
-	url := strings.Split(string(req), "//")[1]
+	url := string(req)
 	if len(req) == 0 || err != nil {
 		http.Error(w, "bad request", http.StatusBadRequest)
 		return
