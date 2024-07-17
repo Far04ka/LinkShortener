@@ -49,7 +49,7 @@ func PostURL(stor storage.Repo) http.HandlerFunc {
 			return
 		}
 
-		id := stor.GetId(url)
+		id := stor.GetID(url)
 		if id != "" {
 			w.WriteHeader(http.StatusCreated)
 			io.WriteString(w, storage.URL+id)
