@@ -35,6 +35,7 @@ func GetURL(stor storage.Repo) http.HandlerFunc {
 	}
 }
 func PostURL(stor storage.Repo) http.HandlerFunc {
+	storage.Storage.Lnks = make(map[string]string)
 	return func(w http.ResponseWriter, r *http.Request) {
 		if r.URL.Path != "/" {
 			http.Error(w, "bad request", http.StatusBadRequest)
