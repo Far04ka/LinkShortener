@@ -10,67 +10,61 @@ import (
 
 func Router(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodGet {
-		http.HandlerFunc(GetURL).ServeHTTP(w, r)
+		GetURL(&storage.Storage).ServeHTTP(w, r)
 	} else if r.Method == http.MethodPost {
-		http.HandlerFunc(PostURL).ServeHTTP(w, r)
+		PostURL(&storage.Storage).ServeHTTP(w, r)
 	} else {
 		http.Error(w, "bad request", http.StatusBadRequest)
 	}
 }
 
-func GetURL(w http.ResponseWriter, r *http.Request) {
-	reqURL := r.URL.Path[1:]
-	if len(reqURL) == 0 {
-		http.Error(w, "bad request", http.StatusBadRequest)
-		return
-	}
-
-	for key, val := range storage.Lnks {
-		if val == reqURL {
-			http.Redirect(w, r, key, http.StatusTemporaryRedirect)
+func GetURL(stor storage.Repo) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		reqURL := r.URL.Path[1:]
+		if len(reqURL) == 0 {
+			http.Error(w, "bad request", http.StatusBadRequest)
 			return
 		}
+
+		redir, err := stor.GetLink(reqURL)
+		if err != nil {
+			http.Error(w, "bad request", http.StatusBadRequest)
+			return
+		}
+		http.Redirect(w, r, redir, http.StatusTemporaryRedirect)
 	}
-
-	http.Error(w, "bad request", http.StatusBadRequest)
-
 }
-
-func PostURL(w http.ResponseWriter, r *http.Request) {
-	if r.URL.Path != "/" {
-		http.Error(w, "bad request", http.StatusBadRequest)
-		return
-	}
-
-	req, err := io.ReadAll(r.Body)
-	url := string(req)
-	if len(req) == 0 || err != nil {
-		http.Error(w, "bad request", http.StatusBadRequest)
-		return
-	}
-
-	for key, val := range storage.Lnks {
-		if key == url {
-			io.WriteString(w, storage.URL+val)
+func PostURL(stor storage.Repo) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path != "/" {
+			http.Error(w, "bad request", http.StatusBadRequest)
 			return
 		}
-	}
 
-	id := ""
+		req, err := io.ReadAll(r.Body)
+		url := string(req)
 
-	for len(id) == 0 {
-		id, _ = shortid.Generate()
-		for _, val := range storage.Lnks {
-			if val == id {
-				id = ""
-				break
-			}
+		if len(req) == 0 || err != nil {
+			http.Error(w, "bad request", http.StatusBadRequest)
+			return
 		}
+
+		id := stor.GetId(url)
+		if id != "" {
+			w.WriteHeader(http.StatusCreated)
+			io.WriteString(w, storage.URL+id)
+			return
+		}
+
+		id, _ = shortid.Generate()
+		flag := stor.SetLink(id, url)
+		for !flag {
+			id, _ = shortid.Generate()
+			flag = stor.SetLink(id, url)
+		}
+
+		w.WriteHeader(http.StatusCreated)
+		io.WriteString(w, storage.URL+id)
+
 	}
-	storage.Lnks[url] = id
-
-	shortURL := storage.URL + id
-	w.WriteHeader(http.StatusCreated)
-	io.WriteString(w, shortURL)
-
 }
