@@ -4,7 +4,7 @@ import "errors"
 
 type Repo interface {
 	GetLink(id string) (string, error)
-	GetId(url string) string
+	GetID(url string) string
 	SetLink(id string, url string) bool
 }
 
@@ -21,7 +21,7 @@ func (stor *SimpleStorage) GetLink(id string) (string, error) {
 	return "", errors.New("not found")
 }
 
-func (stor *SimpleStorage) GetId(url string) string {
+func (stor *SimpleStorage) GetID(url string) string {
 	for key, val := range stor.Lnks {
 		if key == url {
 			return val
