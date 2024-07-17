@@ -55,6 +55,7 @@ func TestGetURL(t *testing.T) {
 			require.Equal(t, test.want.statusCode, res.StatusCode)
 
 			resBody, _ := io.ReadAll(res.Body)
+			defer res.Body.Close()
 
 			assert.Equal(t, test.want.value, string(resBody))
 		})
@@ -102,6 +103,7 @@ func TestPostURL(t *testing.T) {
 
 			PostURL(&storage.Storage)(w, r)
 			res := w.Result()
+			defer res.Body.Close()
 
 			require.Equal(t, test.want.statusCode, res.StatusCode)
 		})
