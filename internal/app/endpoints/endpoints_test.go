@@ -62,6 +62,7 @@ func TestGetURL(t *testing.T) {
 }
 
 func TestPostURL(t *testing.T) {
+	storage.Storage.Lnks = make(map[string]string)
 	type want struct {
 		value      string
 		statusCode int
