@@ -37,7 +37,11 @@ func GetClient(client *http.Client, path string) {
 	if err != nil {
 		panic(err)
 	}
-	client.Do(req)
+	resp, err := client.Do(req)
+	if err != nil {
+		panic(err)
+	}
+	resp.Body.Close()
 }
 
 func main() {
