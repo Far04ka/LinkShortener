@@ -5,22 +5,13 @@ import (
 	"net/http"
 
 	"github.com/Far04ka/LinkShortener/internal/storage"
+	"github.com/go-chi/chi/v5"
 	"github.com/teris-io/shortid"
 )
 
-func Router(w http.ResponseWriter, r *http.Request) {
-	if r.Method == http.MethodGet {
-		GetURL(&storage.Storage).ServeHTTP(w, r)
-	} else if r.Method == http.MethodPost {
-		PostURL(&storage.Storage).ServeHTTP(w, r)
-	} else {
-		http.Error(w, "bad request", http.StatusBadRequest)
-	}
-}
-
 func GetURL(stor storage.Repo) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		reqURL := r.URL.Path[1:]
+		reqURL := chi.URLParam(r, "id")
 		if len(reqURL) == 0 {
 			http.Error(w, "bad request", http.StatusBadRequest)
 			return
@@ -36,10 +27,6 @@ func GetURL(stor storage.Repo) http.HandlerFunc {
 }
 func PostURL(stor storage.Repo) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		if r.URL.Path != "/" {
-			http.Error(w, "bad request", http.StatusBadRequest)
-			return
-		}
 
 		req, err := io.ReadAll(r.Body)
 		url := string(req)

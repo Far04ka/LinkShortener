@@ -5,14 +5,16 @@ import (
 
 	"github.com/Far04ka/LinkShortener/internal/app/endpoints"
 	"github.com/Far04ka/LinkShortener/internal/storage"
+	"github.com/go-chi/chi/v5"
 )
 
 func main() {
 	storage.Storage.Lnks = make(map[string]string)
 
-	mux := http.NewServeMux()
+	router := chi.NewRouter()
 
-	mux.HandleFunc("/", endpoints.Router)
+	router.Get("/{id}", endpoints.GetURL(&storage.Storage))
+	router.Post("/", endpoints.PostURL(&storage.Storage))
 
-	http.ListenAndServe(":8080", mux)
+	http.ListenAndServe(":8080", router)
 }
