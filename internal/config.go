@@ -26,7 +26,7 @@ func (field *AddrField) Set(val string) error {
 	url, port := strings.Split(addr, ":")[0], strings.Split(addr, ":")[1]
 	if url != storage.BaseURL {
 		return errors.New("wrong url")
-	} else if _, err := strconv.Atoi(port); err != nil || len(port) > 4 {
+	} else if _, err := strconv.Atoi(port); err != nil {
 		return errors.New("wrong port")
 	}
 	field.Val = addr
