@@ -7,6 +7,7 @@ import (
 	"strings"
 	"testing"
 
+	conf "github.com/Far04ka/LinkShortener/internal"
 	"github.com/Far04ka/LinkShortener/internal/storage"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -47,7 +48,7 @@ func TestGetURL(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			r := httptest.NewRequest(test.method, storage.URL+test.val, nil)
+			r := httptest.NewRequest(test.method, conf.Conf.Finaladdr.Val+"/"+test.val, nil)
 			w := httptest.NewRecorder()
 			GetURL(&storage.Storage)(w, r)
 
@@ -99,7 +100,7 @@ func TestPostURL(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			reader := strings.NewReader(test.val)
 			w := httptest.NewRecorder()
-			r := httptest.NewRequest(test.method, storage.URL, reader)
+			r := httptest.NewRequest(test.method, conf.Conf.Finaladdr.Val, reader)
 
 			PostURL(&storage.Storage)(w, r)
 			res := w.Result()

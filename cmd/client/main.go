@@ -6,12 +6,12 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/Far04ka/LinkShortener/internal/storage"
+	conf "github.com/Far04ka/LinkShortener/internal"
 )
 
 func PostClient(client *http.Client, path string) map[string]string {
 	answ := make(map[string]string)
-	req, err := http.NewRequest(http.MethodPost, storage.URL, strings.NewReader(path))
+	req, err := http.NewRequest(http.MethodPost, conf.Conf.Finaladdr.Val, strings.NewReader(path))
 	req.Header.Add("Content-Type", "text/html")
 	if err != nil {
 		panic(err)

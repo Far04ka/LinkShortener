@@ -1,3 +1,3 @@
 package storage
 
-const URL string = "http://localhost:8080/"
+const BaseURL string = "localhost"
