@@ -4,6 +4,7 @@ import (
 	"io"
 	"net/http"
 
+	conf "github.com/Far04ka/LinkShortener/internal"
 	"github.com/Far04ka/LinkShortener/internal/storage"
 	"github.com/go-chi/chi/v5"
 	"github.com/teris-io/shortid"
@@ -39,7 +40,7 @@ func PostURL(stor storage.Repo) http.HandlerFunc {
 		id := stor.GetID(url)
 		if id != "" {
 			w.WriteHeader(http.StatusCreated)
-			io.WriteString(w, storage.URL+id)
+			io.WriteString(w, conf.Conf.Finaladdr.Val+id)
 			return
 		}
 
@@ -51,7 +52,7 @@ func PostURL(stor storage.Repo) http.HandlerFunc {
 		}
 
 		w.WriteHeader(http.StatusCreated)
-		io.WriteString(w, storage.URL+id)
+		io.WriteString(w, conf.Conf.Finaladdr.Val+id)
 
 	}
 }

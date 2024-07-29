@@ -7,12 +7,14 @@ import (
 	"strings"
 	"testing"
 
+	conf "github.com/Far04ka/LinkShortener/internal"
 	"github.com/Far04ka/LinkShortener/internal/storage"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
 func TestGetURL(t *testing.T) {
+	conf.Conf = &conf.Config{Addr: &conf.AddrField{Val: "localhost:8080"}, Finaladdr: &conf.FinalAddrField{Val: "http://localhost:8080/", ShortAddr: "/"}}
 	type want struct {
 		value      string
 		statusCode int
@@ -47,7 +49,7 @@ func TestGetURL(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			r := httptest.NewRequest(test.method, storage.URL+test.val, nil)
+			r := httptest.NewRequest(test.method, conf.Conf.Finaladdr.Val+test.val, nil)
 			w := httptest.NewRecorder()
 			GetURL(&storage.Storage)(w, r)
 
@@ -63,6 +65,7 @@ func TestGetURL(t *testing.T) {
 }
 
 func TestPostURL(t *testing.T) {
+	conf.Conf = &conf.Config{Addr: &conf.AddrField{Val: "localhost:8080"}, Finaladdr: &conf.FinalAddrField{Val: "http://localhost:8080/", ShortAddr: "/"}}
 	storage.Storage.Lnks = make(map[string]string)
 	type want struct {
 		value      string
@@ -99,7 +102,7 @@ func TestPostURL(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			reader := strings.NewReader(test.val)
 			w := httptest.NewRecorder()
-			r := httptest.NewRequest(test.method, storage.URL, reader)
+			r := httptest.NewRequest(test.method, conf.Conf.Finaladdr.Val, reader)
 
 			PostURL(&storage.Storage)(w, r)
 			res := w.Result()
