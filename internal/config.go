@@ -54,7 +54,10 @@ func (field *FinalAddrField) Set(val string) error {
 	}
 
 	field.Val = val + "/"
-	field.ShortAddr = "/" + addr + "/"
+	if len(addr) != 0 {
+		field.ShortAddr = "/" + addr + "/"
+	}
+
 	return nil
 }
 
