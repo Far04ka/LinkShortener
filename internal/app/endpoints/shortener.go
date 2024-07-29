@@ -40,7 +40,7 @@ func PostURL(stor storage.Repo) http.HandlerFunc {
 		id := stor.GetID(url)
 		if id != "" {
 			w.WriteHeader(http.StatusCreated)
-			io.WriteString(w, conf.Conf.Addr.Val+"/"+conf.Conf.Finaladdr.Val+id)
+			io.WriteString(w, conf.Conf.Finaladdr.Val+id)
 			return
 		}
 
@@ -52,7 +52,7 @@ func PostURL(stor storage.Repo) http.HandlerFunc {
 		}
 
 		w.WriteHeader(http.StatusCreated)
-		io.WriteString(w, conf.Conf.Addr.Val+"/"+conf.Conf.Finaladdr.Val+id)
+		io.WriteString(w, conf.Conf.Finaladdr.Val+id)
 
 	}
 }

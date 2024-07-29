@@ -34,7 +34,8 @@ func (field *AddrField) Set(val string) error {
 }
 
 type FinalAddrField struct {
-	Val string
+	Val       string
+	ShortAddr string
 }
 
 func (field *FinalAddrField) String() string {
@@ -42,18 +43,18 @@ func (field *FinalAddrField) String() string {
 }
 
 func (field *FinalAddrField) Set(val string) error {
+
+	mainAddr := ""
+	addr := ""
 	if strings.Contains(val, "//") {
-		val = strings.Split(val, "//")[1]
+		mainAddr, addr = strings.Split(strings.Split(val, "//")[1], "/")[0], strings.Join(strings.Split(strings.Split(val, "//")[1], "/")[1:], "")
 	}
-
-	mainAdr, addr := strings.Split(val, "/")[0], strings.Join(strings.Split(val, "/")[1:], "")
-	if strings.Contains(mainAdr, "//") && strings.Split(mainAdr, "//")[1] != Conf.Addr.Val {
-		return errors.New("wrong base addres")
-	} else if mainAdr != Conf.Addr.Val {
+	if mainAddr != Conf.Addr.Val {
 		return errors.New("wrong base addres")
 	}
 
-	field.Val = addr + "/"
+	field.Val = val + "/"
+	field.ShortAddr = "/" + addr + "/"
 	return nil
 }
 

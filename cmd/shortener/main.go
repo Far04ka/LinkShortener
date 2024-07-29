@@ -18,7 +18,7 @@ func init() {
 func main() {
 	router := chi.NewRouter()
 
-	router.Get("/"+conf.Conf.Finaladdr.Val+"{id}", endpoints.GetURL(&storage.Storage))
+	router.Get(conf.Conf.Finaladdr.ShortAddr+"{id}", endpoints.GetURL(&storage.Storage))
 	router.Post("/", endpoints.PostURL(&storage.Storage))
 
 	http.ListenAndServe(conf.Conf.Addr.Val, router)
