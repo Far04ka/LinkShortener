@@ -14,6 +14,7 @@ import (
 )
 
 func TestGetURL(t *testing.T) {
+	conf.Conf = &conf.Config{Addr: &conf.AddrField{Val: "localhost:8080"}, Finaladdr: &conf.FinalAddrField{Val: "http://localhost:8080/", ShortAddr: "/"}}
 	type want struct {
 		value      string
 		statusCode int
@@ -48,7 +49,7 @@ func TestGetURL(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			r := httptest.NewRequest(test.method, conf.Conf.Finaladdr.Val+"/"+test.val, nil)
+			r := httptest.NewRequest(test.method, conf.Conf.Finaladdr.Val+test.val, nil)
 			w := httptest.NewRecorder()
 			GetURL(&storage.Storage)(w, r)
 
@@ -64,6 +65,7 @@ func TestGetURL(t *testing.T) {
 }
 
 func TestPostURL(t *testing.T) {
+	conf.Conf = &conf.Config{Addr: &conf.AddrField{Val: "localhost:8080"}, Finaladdr: &conf.FinalAddrField{Val: "http://localhost:8080/", ShortAddr: "/"}}
 	storage.Storage.Lnks = make(map[string]string)
 	type want struct {
 		value      string
