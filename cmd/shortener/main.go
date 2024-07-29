@@ -10,7 +10,7 @@ import (
 )
 
 func init() {
-	conf.Conf = &conf.Config{Addr: &conf.AddrField{Val: "localhost:8080"}, Finaladdr: &conf.FinalAddrField{}}
+	conf.Conf = &conf.Config{Addr: &conf.AddrField{Val: "localhost:8080"}, Finaladdr: &conf.FinalAddrField{Val: "http://localhost:8080/", ShortAddr: "/"}}
 	conf.CreateConfig()
 	storage.Storage.Lnks = make(map[string]string)
 }
