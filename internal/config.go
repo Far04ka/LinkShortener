@@ -42,6 +42,10 @@ func (field *FinalAddrField) String() string {
 }
 
 func (field *FinalAddrField) Set(val string) error {
+	if strings.Contains(val, "//") {
+		val = strings.Split(val, "//")[1]
+	}
+
 	mainAdr, addr := strings.Split(val, "/")[0], strings.Join(strings.Split(val, "/")[1:], "")
 	if strings.Contains(mainAdr, "//") && strings.Split(mainAdr, "//")[1] != Conf.Addr.Val {
 		return errors.New("wrong base addres")
