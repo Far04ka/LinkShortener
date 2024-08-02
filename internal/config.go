@@ -3,6 +3,7 @@ package conf
 import (
 	"errors"
 	"flag"
+	"os"
 	"strconv"
 	"strings"
 
@@ -68,8 +69,30 @@ type Config struct {
 
 var Conf *Config
 
-func CreateConfig() {
+func CreateConfig() error {
+	flg := false
 	flag.Var(Conf.Addr, "a", "base URL")
 	flag.Var(Conf.Finaladdr, "b", "URL before short link")
-	flag.Parse()
+
+	if val, ok := os.LookupEnv("SERVER_ADDRESS"); ok && val != "" {
+		err := Conf.Addr.Set(val)
+		if err != nil {
+			return err
+		}
+	} else {
+		flg = true
+	}
+
+	if val, ok := os.LookupEnv("BASE_URL"); ok {
+		err := Conf.Finaladdr.Set(val)
+		if err != nil {
+			return err
+		}
+	} else {
+		flg = true
+	}
+	if flg {
+		flag.Parse()
+	}
+	return nil
 }
