@@ -70,7 +70,7 @@ type Config struct {
 var Conf *Config
 
 func CreateConfig() error {
-	if val, ok := os.LookupEnv("SERVER_ADDRESS"); ok {
+	if val, ok := os.LookupEnv("SERVER_ADDRESS"); ok && val != "" {
 		err := Conf.Addr.Set(val)
 		if err != nil {
 			return err
