@@ -70,13 +70,17 @@ type Config struct {
 var Conf *Config
 
 func CreateConfig() error {
+	flg := false
+	flag.Var(Conf.Addr, "a", "base URL")
+	flag.Var(Conf.Finaladdr, "b", "URL before short link")
+
 	if val, ok := os.LookupEnv("SERVER_ADDRESS"); ok && val != "" {
 		err := Conf.Addr.Set(val)
 		if err != nil {
 			return err
 		}
 	} else {
-		flag.Var(Conf.Addr, "a", "base URL")
+		flg = true
 	}
 
 	if val, ok := os.LookupEnv("BASE_URL"); ok {
@@ -85,8 +89,10 @@ func CreateConfig() error {
 			return err
 		}
 	} else {
-		flag.Var(Conf.Finaladdr, "b", "URL before short link")
+		flg = true
 	}
-	flag.Parse()
+	if flg {
+		flag.Parse()
+	}
 	return nil
 }
